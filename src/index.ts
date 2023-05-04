@@ -1,7 +1,9 @@
-import express, { Express, NextFunction, Request, Response } from 'express';
-import session, { Session } from 'express-session';
+import express, { Express, Request, Response } from 'express';
+import session from 'express-session';
 const RedisStore = require('connect-redis').default;
 import { createClient } from 'redis';
+import { errorHandler, notFound } from './utils/errorHandler';
+import routes from './routes';
 const port: number = 4000;
 const redisClient = createClient();
 redisClient.on('error', (err): void => {
@@ -12,7 +14,7 @@ redisClient.on('error', (err): void => {
 redisClient.on('connect', (): void => {
     console.log('Redis plugged in.');
 });
-(async () => {
+(async (): Promise<void> => {
     await redisClient.connect();
 })();
 const redisStore = new RedisStore({
@@ -28,6 +30,7 @@ app.use(
         resave: false,
         saveUninitialized: false,
         secret: 'key secret',
+        name: 'sessionId',
         cookie: {
             secure: false,
             httpOnly: true,
@@ -37,44 +40,12 @@ app.use(
 );
 app.get('/', (req: Request, res: Response) => {
     return res.status(200).json({
-        message: 'Hi',
+        message: 'Welcome to the server 👋👋',
     });
 });
-interface ISession extends Session {
-    clientId?: string;
-    myNum?: number;
-}
-//
-app.post('/login', (req: Request, res: Response) => {
-    const { email, password } = req.body;
-    (req.session as ISession).clientId = 'abc123';
-    (req.session as ISession).myNum = 5;
-    return res.status(200).json({
-        message: 'You are logged in',
-    });
-});
-
-//
-class IError extends Error {
-    constructor(public message: string, public statusCode?: number) {
-        super(message);
-        this.statusCode = statusCode;
-        // Object.setPrototypeOf(this, new.target.prototype);
-    }
-}
-app.use((req: Request, res: Response, next: NextFunction) => {
-    const request = req.session as ISession;
-    if (!request || !request.clientId) {
-        const err: IError = new IError('You shall not pass');
-        err.statusCode = 401;
-        next(err);
-    }
-    next();
-});
-
-app.get('/profile', (req: Request, res: Response) => {
-    return res.json(req.session);
-});
+routes(app);
+app.use(notFound);
+app.use(errorHandler);
 app.listen(port, () => {
     console.log(`Server listening on http://localhost:${port}`);
 }).on('error', (e: Error) => {
