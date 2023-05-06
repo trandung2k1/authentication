@@ -1,6 +1,5 @@
-import { Session } from "express-session";
+import { Session } from 'express-session';
 
 export interface ISession extends Session {
-    clientId?: string;
-    myNum?: number;
+    user: {};
 }

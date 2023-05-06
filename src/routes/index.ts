@@ -4,13 +4,13 @@ const routes = (app: Express) => {
     app.use('/api/auth', auth);
     app.post('/login', (req: Request, res: Response) => {
         const refreshToken: string = 'Refresh token';
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            path: '/',
-            secure: false,
-            sameSite: 'strict',
-            expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        });
+        // res.cookie('refreshToken', refreshToken, {
+        //     httpOnly: true,
+        //     path: '/',
+        //     secure: false,
+        //     sameSite: 'strict',
+        //     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        // });
         return res.status(200).json({
             message: 'Login successfully',
         });
