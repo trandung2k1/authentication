@@ -4,10 +4,11 @@
     "main": "src/index.ts",
     "license": "MIT",
     "scripts": {
-        "dev": "nodemon --watch src/index.ts",
+        "dev": "nodemon src/index.ts",
         "build": "tsc"
     },
     "dependencies": {
+        "bcrypt": "^5.1.0",
         "connect-redis": "^7.0.1",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
