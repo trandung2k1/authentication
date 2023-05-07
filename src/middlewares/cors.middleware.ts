@@ -1,5 +1,5 @@
 import cors from 'cors';
-const whitelist: string[] = ['http://localhost:5500'];
+const whitelist: string[] = ['http://localhost:5500', 'http://localhost:5173'];
 const corsOptions: cors.CorsOptions = {
     origin: (
         requestOrigin: string | undefined,

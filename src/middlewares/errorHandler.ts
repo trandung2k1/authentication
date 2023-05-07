@@ -8,7 +8,11 @@ export const notFound = (req: Request, res: Response, next: NextFunction) => {
 };
 export const errorHandler = (error: IError, req: Request, res: Response, next: NextFunction) => {
     const statusCode = res.statusCode == 200 ? 500 : res.statusCode;
-    res.status(statusCode);
+    if (error.statusCode) {
+        res.status(error?.statusCode!);
+    } else {
+        res.status(statusCode);
+    }
     return res.json({
         status: error?.statusCode,
         message: error?.message,
